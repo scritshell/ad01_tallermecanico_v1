@@ -8,6 +8,8 @@ import org.iesalandalus.programacion.tallermecanico.modelo.negocio.FabricaFuente
 import org.iesalandalus.programacion.tallermecanico.vista.FabricaVista;
 
 
+
+
 public class Main {
     public static void main(String[] args) {
         Pair<FabricaVista, FabricaFuenteDatos> fabricas = procesarArgumentos(args);
@@ -17,7 +19,7 @@ public class Main {
 
     private static Pair<FabricaVista, FabricaFuenteDatos> procesarArgumentos(String[] args) {
         FabricaVista fabricaVista = FabricaVista.VENTANAS;
-        FabricaFuenteDatos fabricaFuenteDatos = FabricaFuenteDatos.FICHEROS_XML;
+        FabricaFuenteDatos fabricaFuenteDatos = FabricaFuenteDatos.FICHEROS_JSON; // Usamos JSON
         for (String argumento : args) {
             if (argumento.equalsIgnoreCase("-vventanas")) {
                 fabricaVista = FabricaVista.VENTANAS;
@@ -25,8 +27,9 @@ public class Main {
                 fabricaVista = FabricaVista.TEXTO;
             } else if (argumento.equalsIgnoreCase("-fdficherosxml")) {
                 fabricaFuenteDatos = FabricaFuenteDatos.FICHEROS_XML;
+            } else if (argumento.equalsIgnoreCase("-fdficherosjson")) {
+                fabricaFuenteDatos = FabricaFuenteDatos.FICHEROS_JSON; // Opcion para el JSON
             }
-
         }
         return new Pair<>(fabricaVista, fabricaFuenteDatos);
     }
