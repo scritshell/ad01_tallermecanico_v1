@@ -2,6 +2,7 @@ package org.iesalandalus.programacion.tallermecanico.modelo.negocio.ficheros.jso
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.iesalandalus.programacion.tallermecanico.modelo.dominio.*;
 import org.iesalandalus.programacion.tallermecanico.modelo.negocio.ITrabajos;
@@ -22,6 +23,8 @@ public class Trabajos implements ITrabajos {
     private Trabajos() {
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        mapper.registerSubtypes(new NamedType(Mecanico.class, "Mecanico"));
+        mapper.registerSubtypes(new NamedType(Revision.class, "Revision"));
     }
 
     public static Trabajos getInstancia() {
@@ -46,7 +49,8 @@ public class Trabajos implements ITrabajos {
         try {
             // Jackson usará las anotaciones @JsonTypeInfo de la clase Trabajo para saber
             // si crea un Mecanico o una Revision de forma automática
-            return mapper.readValue(fichero, new TypeReference<List<Trabajo>>() {});
+            return mapper.readValue(fichero, new TypeReference<>() {
+            });
         } catch (IOException e) {
             throw new RuntimeException("Error al leer el fichero JSON de trabajos", e);
         }
@@ -58,7 +62,9 @@ public class Trabajos implements ITrabajos {
             if (!fichero.getParentFile().exists()) {
                 fichero.getParentFile().mkdirs();
             }
-            mapper.writerWithDefaultPrettyPrinter().writeValue(fichero, trabajos);
+            mapper.writerWithDefaultPrettyPrinter()
+                    .forType(new TypeReference<List<Trabajo>>() {})
+                    .writeValue(fichero, trabajos);
         } catch (IOException e) {
             throw new RuntimeException("Error al escribir en el fichero JSON de trabajos", e);
         }

@@ -1,0 +1,17 @@
+[ {
+  "tipo" : "Mecanico",
+  "precioMaterial" : 0.0,
+  "cliente" : {
+    "nombre" : "Penelope Perez",
+    "dni" : "11111111H",
+    "telefono" : "123456789"
+  },
+  "vehiculo" : {
+    "marca" : "Toyota",
+    "modelo" : "4x4",
+    "matricula" : "4041P2S"
+  },
+  "fechaInicio" : "2025-12-01",
+  "fechaFin" : null,
+  "horas" : 0
+} ]

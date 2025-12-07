@@ -1,11 +1,13 @@
 package org.iesalandalus.programacion.tallermecanico.modelo.dominio;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
-import org.iesalandalus.programacion.tallermecanico.modelo.TallerMecanicoExcepcion;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.iesalandalus.programacion.tallermecanico.modelo.TallerMecanicoExcepcion;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -20,23 +22,28 @@ import java.util.Objects;
         @JsonSubTypes.Type(value = Mecanico.class, name = "Mecanico"),
         @JsonSubTypes.Type(value = Revision.class, name = "Revision")
 })
-public abstract class Trabajo {
-
+public abstract class Trabajo implements Serializable {
     public static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final float FACTOR_DIA = 10F;
 
+    @JsonProperty("cliente")
     private Cliente cliente;
+
+    @JsonProperty("vehiculo")
     private Vehiculo vehiculo;
 
+    @JsonProperty("fechaInicio")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaInicio;
 
+    @JsonProperty("fechaFin")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaFin;
 
-
+    @JsonProperty("horas")
     private int horas;
-    protected Trabajo(){}
+
+    protected Trabajo() {}
 
     protected Trabajo(Cliente cliente, Vehiculo vehiculo, LocalDate fechaInicio) {
         setCliente(cliente);
@@ -54,6 +61,7 @@ public abstract class Trabajo {
         horas = trabajo.horas;
     }
 
+    @JsonIgnore
     public static Trabajo copiar(Trabajo trabajo) {
         Objects.requireNonNull(trabajo, "El trabajo no puede ser nulo.");
         Trabajo trabajoCopiado = null;
@@ -65,33 +73,40 @@ public abstract class Trabajo {
         return trabajoCopiado;
     }
 
+    @JsonIgnore
     public static Trabajo get(Vehiculo vehiculo) {
         Objects.requireNonNull(vehiculo, "El vehículo no puede ser nulo.");
         return new Revision(Cliente.get("11111111H"), vehiculo, LocalDate.now());
     }
 
+    @JsonProperty("cliente")
     public Cliente getCliente() {
         return cliente;
     }
 
+    @JsonProperty("cliente")
     private void setCliente(Cliente cliente) {
         Objects.requireNonNull(cliente, "El cliente no puede ser nulo.");
         this.cliente = cliente;
     }
 
+    @JsonProperty("vehiculo")
     public Vehiculo getVehiculo() {
         return vehiculo;
     }
 
+    @JsonProperty("vehiculo")
     private void setVehiculo(Vehiculo vehiculo) {
         Objects.requireNonNull(vehiculo, "El vehículo no puede ser nulo.");
         this.vehiculo = vehiculo;
     }
 
+    @JsonProperty("fechaInicio")
     public LocalDate getFechaInicio() {
         return fechaInicio;
     }
 
+    @JsonProperty("fechaInicio")
     private void setFechaInicio(LocalDate fechaInicio) {
         Objects.requireNonNull(fechaInicio, "La fecha de inicio no puede ser nula.");
         if (fechaInicio.isAfter(LocalDate.now())) {
@@ -100,23 +115,33 @@ public abstract class Trabajo {
         this.fechaInicio = fechaInicio;
     }
 
+    @JsonProperty("fechaFin")
     public LocalDate getFechaFin() {
         return fechaFin;
     }
 
+    @JsonProperty("fechaFin")
     private void setFechaFin(LocalDate fechaFin) {
-        Objects.requireNonNull(fechaFin, "La fecha de fin no puede ser nula.");
-        if (fechaFin.isBefore(fechaInicio)) {
-            throw new IllegalArgumentException("La fecha de fin no puede ser anterior a la fecha de inicio.");
-        }
-        if (fechaFin.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("La fecha de fin no puede ser futura.");
+        if (fechaFin != null) {
+            Objects.requireNonNull(fechaFin, "La fecha de fin no puede ser nula.");
+            if (fechaFin.isBefore(fechaInicio)) {
+                throw new IllegalArgumentException("La fecha de fin no puede ser anterior a la fecha de inicio.");
+            }
+            if (fechaFin.isAfter(LocalDate.now())) {
+                throw new IllegalArgumentException("La fecha de fin no puede ser futura.");
+            }
         }
         this.fechaFin = fechaFin;
     }
 
+    @JsonProperty("horas")
     public int getHoras() {
         return horas;
+    }
+
+    @JsonProperty("horas")
+    public void setHoras(int horas) {
+        this.horas = horas;
     }
 
     public void anadirHoras(int horas) throws TallerMecanicoExcepcion {
@@ -152,8 +177,8 @@ public abstract class Trabajo {
     }
 
     @JsonIgnore
-    private float getDias() {
-        return (estaCerrado()) ? (int) ChronoUnit.DAYS.between(fechaInicio, fechaFin) : 0;
+    private long getDias() {
+        return (estaCerrado()) ? ChronoUnit.DAYS.between(fechaInicio, fechaFin) : 0;
     }
 
     @JsonIgnore
@@ -163,7 +188,9 @@ public abstract class Trabajo {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Trabajo trabajo)) return false;
-        return Objects.equals(cliente, trabajo.cliente) && Objects.equals(vehiculo, trabajo.vehiculo) && Objects.equals(fechaInicio, trabajo.fechaInicio);
+        return Objects.equals(cliente, trabajo.cliente) &&
+                Objects.equals(vehiculo, trabajo.vehiculo) &&
+                Objects.equals(fechaInicio, trabajo.fechaInicio);
     }
 
     @Override
