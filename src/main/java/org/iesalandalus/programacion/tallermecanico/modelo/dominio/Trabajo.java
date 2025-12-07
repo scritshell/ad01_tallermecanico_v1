@@ -11,7 +11,15 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
-
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "tipo" // La propiedad en el JSON será "tipo": "Mecanico"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = Mecanico.class, name = "Mecanico"),
+        @JsonSubTypes.Type(value = Revision.class, name = "Revision")
+})
 public abstract class Trabajo {
     public static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final float FACTOR_DIA = 10F;
