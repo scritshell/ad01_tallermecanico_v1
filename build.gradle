@@ -25,6 +25,8 @@ dependencies {
     // Mockito
     testImplementation 'org.mockito:mockito-core:+'
     // Entrada
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.2'
     implementation 'com.github.JRJimenezReyes:entrada:1.0.3'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.2'
     implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.18.2'
